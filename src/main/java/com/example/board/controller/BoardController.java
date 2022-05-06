@@ -11,6 +11,7 @@ import com.example.board.repository.PostRepository;
 import com.example.board.repository.Post;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import java.util.Optional;
 
 /**
  * 掲示板のフロントコントローラー.
@@ -68,5 +69,36 @@ public class BoardController {
         model.addAttribute("path", "create");
         return "layout";
     }
-	
+    /**
+    * 編集する投稿を表示する
+    *
+    * @param form  フォーム
+    * @param model モデル
+    * @return テンプレート
+    */
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String edit(@ModelAttribute("form") Post form, Model model) {
+        Optional<Post> post = repository.findById(form.getId());
+        model.addAttribute("form", post);
+        model = setList(model);
+        model.addAttribute("path", "update");
+        return "layout";
+    }
+
+    /**
+    * 更新する
+    *
+    * @param form  フォーム
+    * @param model モデル
+    * @return テンプレート
+    */
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@ModelAttribute("form") Post form, Model model) {
+        Optional<Post> post = repository.findById(form.getId());
+        repository.saveAndFlush(PostFactory.updatePost(post.get(), form));
+        model.addAttribute("form", PostFactory.newPost());
+        model = setList(model);
+        model.addAttribute("path", "create");
+        return "layout";
+    }
 }
