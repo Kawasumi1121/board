@@ -101,4 +101,21 @@ public class BoardController {
         model.addAttribute("path", "create");
         return "layout";
     }
+    
+	/**
+	 * 削除する
+	 *
+	 * @param form  フォーム
+	 * @param model モデル
+	 * @return テンプレート
+	 */
+	@RequestMapping(value = "/delete", method = RequestMethod.GET)
+	public String delete(@ModelAttribute("form") Post form, Model model) {
+		Optional<Post> post = repository.findById(form.getId());
+		repository.saveAndFlush(PostFactory.deletePost(post.get()));
+		model.addAttribute("form", PostFactory.newPost());
+		model = setList(model);
+		model.addAttribute("path", "create");
+		return "layout";
+	}
 }
