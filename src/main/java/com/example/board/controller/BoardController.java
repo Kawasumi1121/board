@@ -9,6 +9,8 @@ import com.example.board.repository.PostFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.board.repository.PostRepository;
 import com.example.board.repository.Post;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * 掲示板のフロントコントローラー.
@@ -47,4 +49,24 @@ public class BoardController {
 		model.addAttribute("list", list);
 		return model;
 	}
+	
+    /**
+    * 登録する。
+    *
+    * @param form  フォーム
+    * @param model モデル
+    * @return テンプレート
+    */
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(@ModelAttribute("form") Post form, BindingResult result,
+            Model model) {
+        if (!result.hasErrors()) {
+            repository.saveAndFlush(PostFactory.createPost(form));
+            model.addAttribute("form", PostFactory.newPost());
+        }
+        model = this.setList(model);
+        model.addAttribute("path", "create");
+        return "layout";
+    }
+	
 }
