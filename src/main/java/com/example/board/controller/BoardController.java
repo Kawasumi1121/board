@@ -12,6 +12,7 @@ import com.example.board.repository.Post;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import java.util.Optional;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * 掲示板のフロントコントローラー.
@@ -59,8 +60,7 @@ public class BoardController {
     * @return テンプレート
     */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@ModelAttribute("form") Post form, BindingResult result,
-            Model model) {
+    public String create(@ModelAttribute("form") @Validated Post form, BindingResult result, Model model) {
         if (!result.hasErrors()) {
             repository.saveAndFlush(PostFactory.createPost(form));
             model.addAttribute("form", PostFactory.newPost());
@@ -93,9 +93,11 @@ public class BoardController {
     * @return テンプレート
     */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute("form") Post form, Model model) {
+    public String update(@ModelAttribute("form") @Validated Post form, BindingResult result, Model model) {
+    	if (!result.hasErrors()) {
         Optional<Post> post = repository.findById(form.getId());
         repository.saveAndFlush(PostFactory.updatePost(post.get(), form));
+    	}
         model.addAttribute("form", PostFactory.newPost());
         model = setList(model);
         model.addAttribute("path", "create");
