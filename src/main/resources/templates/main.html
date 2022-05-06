@@ -1,5 +1,9 @@
 <form method="POST" action="#" th:action="@{${path}}"
 	th:object="${form}">
+	<ul class="errs">
+		<li th:each="error : ${#fields.detailedErrors()}"
+			th:text="${error.message}" class="err" />
+	</ul>
 	<input type="hidden" th:field="*{id}" />
 	<section id="form">
 		<dl class="clearfix">
@@ -8,7 +12,9 @@
 			</dt>
 			<dd>
 				<div>
-					<input type="text" th:field="*{author}" />
+					<input type="text" th:field="*{author}" />  
+					<span   th:if="${#fields.hasErrors('author')}" th:errors="*{author}"
+							th:errorclass="err" />
 				</div>
 			</dd>
 			<dt>
@@ -16,7 +22,9 @@
 			</dt>
 			<dd>
 				<div>
-					<input type="text" th:field="*{title}" />
+					<input type="text" th:field="*{title}" /> 
+					<span  th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+						   th:errorclass="err" />
 				</div>
 			</dd>
 			<dt>
@@ -25,6 +33,8 @@
 			<dd>
 				<div>
 					<textarea th:field="*{body}"></textarea>
+					<span th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
+						  th:errorclass="err" />
 				</div>
 			</dd>
 		</dl>
